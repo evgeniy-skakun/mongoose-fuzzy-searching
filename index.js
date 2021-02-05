@@ -65,6 +65,12 @@ const getDefaultValues = (item) => {
   };
 };
 
+const getSearchFields = (item) => {
+  const fields = isObject(item) ? (item.fields || []).map(e => `${e}_fuzzy`) : [];
+
+  return fields;
+};
+
 const getArgs = (queryArgs) => {
   let queryString = queryArgs;
   let exact = false;
@@ -90,6 +96,7 @@ function fuzzySearch(...args) {
   }
 
   const { checkPrefixOnly, defaultNgamMinSize } = getDefaultValues(queryArgs[0]);
+  const fields = getSearchFields(queryArgs[0]);
 
   const query = exact
     ? `"${queryString}"`
@@ -98,16 +105,26 @@ function fuzzySearch(...args) {
   const { callback, options } = parseArguments(queryArgs, 1, 2);
 
   let search;
+  let command = {
+    $text: {
+      $search: query
+    }
+  };
+
+  if (fields && fields.length) {
+    command = {};
+    fields.forEach(f => {
+      command[f] = {
+        $all: query.split(' ')
+      }
+    });
+  }
 
   if (!isObject(options)) {
-    search = {
-      $text: {
-        $search: query,
-      },
-    };
+    search = command;
   } else {
     search = {
-      $and: [{ $text: { $search: query } }, options],
+      $and: [command, options],
     };
   }
 

@@ -281,6 +281,7 @@ The below table contains the expected keys for the first parameter (if is an obj
 | **key**    | **type**    | **deafult** | **description**                                                                   |
 | ---------- | ----------- | ----------- | --------------------------------------------------------------------------------- |
 | query      | **String**  | null        | String to search                                                                  |
+| fields     | **String[]**| null        | Search fields                                                                     |
 | minSize    | **Integer** | 2           | N-grams min size.                                                                 |
 | prefixOnly | **Boolean** | false       | Only return ngrams from start of word. (It gives more precise results) the prefix |
 | exact      | **Boolean** | false       | Matches on a phrase, as opposed to individual terms                               |
@@ -293,6 +294,11 @@ User.fuzzySearch('jo').then(console.log).catch(console.error);
 
 /* With additional options that returns a Promise */
 User.fuzzySearch({ query: 'jo', prefixOnly: true, minSize: 4 })
+  .then(console.log)
+  .catch(console.error);
+
+/* With additional options that returns a Promise */
+User.fuzzySearch({ query: 'jo', prefixOnly: true, fields: ['firstName'] })
   .then(console.log)
   .catch(console.error);
 
