@@ -112,11 +112,11 @@ function fuzzySearch(...args) {
   };
 
   if (fields && fields.length) {
-    command = {};
+    command = { '$or': [] };
     fields.forEach(f => {
-      command[f] = {
-        $all: query.split(' ')
-      }
+      command['$or'].push({
+        [f]: { $all: query.split(' ') }
+      });
     });
   }
 
